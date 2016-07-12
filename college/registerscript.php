@@ -66,6 +66,7 @@
 	$u_id = "";
 	$u_key = ""; //encryption of u_password
 	$u_name  = "";
+	$u_enroll = "";
 	$u_pic = "";
 	$u_email = "";
 	$u_password = "";
@@ -101,7 +102,7 @@
 	//md5 encrypted key
 	$md5_u_key = md5($u_key);
 
-	
+	$u_enroll = strip_tags(@$_POST['u_enroll']);
 
 	$u_batch = @$_POST['u_batch'];
 	
@@ -120,16 +121,22 @@
 	
 	
 	if($log){
-		
+		//Check if enrollment id already exists
+		$u_enroll_check = mysql_query("SELECT u_enroll FROM chatusers WHERE u_enroll ='$u_enroll'");
+		//Count the amount of rows where u_enroll = $u_enroll
+		$enroll_check = mysql_num_rows($u_enroll_check);
+
+
+		if($enroll_check == 0){
 		//Check if email id already exists
-		$u_check = mysql_query("SELECT u_email FROM chatusers WHERE u_email ='$u_email'");
-		//Count the amount of rows where e_id = $e_id
-		$check = mysql_num_rows($u_check);
+		$e_check = mysql_query("SELECT u_email FROM chatusers WHERE u_email ='$u_email'");
+		//Count the amount of rows where u_email = $u_email
+		$check = mysql_num_rows($e_check);
 		
 		if($check == 0){
 		
 			//check all of the fields have been filled in
-			if($u_name&&$u_key&&$u_batch&&$u_year&&$u_pic&&$u_email&&$u_password){
+			if($u_name&&$u_key&&$u_enroll&&$u_batch&&$u_year&&$u_pic&&$u_email&&$u_password){
 					
 					
 
@@ -199,8 +206,11 @@
 
 			}
 		}else{
-			echo '<div class="alert alert-info">This already exists!</div>';
+			echo '<div class="alert alert-info">This email already exists!</div>';
 		}
+	}else{
+		echo '<div class="alert alert-info">This enrollment number is already registered with us</div>';
+	}
 
 	}else{
 		echo "<h1>Error. Contact the web admin @admin@bvulive.in</h1>";

@@ -65,6 +65,12 @@
       <input type="text" class="form-control" id="u_name" name="u_name">
     </div>
 </div>
+<div class="form-group">
+    <label class="control-label col-sm-2" for="u_enroll">Enrollment No:</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" id="u_enroll" name="u_enroll">
+    </div>
+</div>
 
 <div class="col-sm-offset-1 col-sm-4" style="padding: 0px 0px;padding-right:1px;">
             <div class="form-group">
