@@ -83,6 +83,12 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 	//Check for their existence
 	$count = mysql_num_rows($sql); //Count the number of rows returned
 	if ($count == 0) {
+
+		//MAKING USERNAME UNIQUE
+		$username_sql = mysql_query("SELECT * FROM chatroom WHERE c_username = '$c_name_first_capital'"); // query the username
+		$username_count = mysql_num_rows($username_sql);
+		if($username_count==0){
+
 		
 
 		//check all of the fields have been filled in
@@ -106,11 +112,18 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 					)";
 
 					if(mysql_query($sql_create_table)){
-						echo "<div class='alert alert-info'><h4>Your chatroom is ready now! Explore....</h4></div>";
+						echo "<div class='alert alert-info'><h4>Your chatroom is ready now!</h4></div>";
 					}else{
 						echo "<div class='alert alert-danger'".mysql_error(mysql_connect("localhost" , "root" , "myniki123"))."</div>"; //change here
 					}
 					mysql_select_db("bvuevents") or die("Couldn't revert back to the previous database");
+					$sql_insert_chatroom_login = mysql_query("INSERT INTO chatroom_login VALUES ('', '$c_username', '$c_password', '$c_name_first_capital')");
+					if($sql_insert_chatroom_login){
+						echo "<div class='alert alert-info'><h4>Explore....</h4></div>";
+					}else{
+
+						echo "<div class='alert alert-danger'".mysql_error(mysql_connect("localhost" , "root" , "myniki123"))."</div>"; //change here
+					}
 
 
 					echo '<div class="col-sm-6">
@@ -128,7 +141,16 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 				echo "<div class='alert alert-danger'".mysql_error(mysql_connect("localhost" , "root" , "myniki123"))."</div>"; //change here
 			}
 
+		}else{
+			echo "<div class='alert alert-danger><h4>Please fill in all the fields</h4></div>";
 		}
+	}
+	else
+	{
+		echo "<div class='alert alert-info><h4>Username already exists!!</h4></div>";
+	}
+	
+
 	} 
 	else 
 	{

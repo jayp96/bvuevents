@@ -9,6 +9,14 @@ else{
 	$u_id = $_SESSION['u_id'];
 	
 }
+if(!isset($_SESSION['chat_id'])){
+	$c_id = '';
+}
+else{
+
+	$c_id = $_SESSION['chat_id'];
+	
+}
 	
 ?>
 
