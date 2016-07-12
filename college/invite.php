@@ -95,147 +95,61 @@
 		</div>
 </nav>
 
+<!--cr_username and d_name dono dene h email me-->
+
 <?php
 
-	$chatname_extract_sql = mysql_query("SELECT * FROM chatroom_login WHERE cr_id='$c_id'");
 
-	while($chatname_extract_array = mysql_fetch_assoc($chatname_extract_sql)){
-	$chatname_details['cr_id'] = $chatname_extract_array['cr_id'];
-	$chatname_details['cr_username'] = $chatname_extract_array['cr_username'];
-	$chatname_details['cr_password'] = $chatname_extract_array['cr_password'];
-	$chatname_details['d_name'] = $chatname_extract_array['d_name']; 
+
+$sql_extract_data = mysql_query("SELECT cr_username,d_name FROM chatroom_login WHERE cr_id='$c_id'");
+
+while($sql_extract = mysql_fetch_assoc($sql_extract_data)){
+
+
+	$chatroom_username = $sql_extract['cr_username'];
+	$chatroom_name = $sql_extract['d_name'];
+	
+
 }
-	$_SESSION["chat_name"] = $chatname_details['d_name']; //will be used to refer in php scripts folder
-
-	echo "<h2>Welcome ".$chatname_details['cr_username']."</h2>";
-
-
 
 
 
 ?>
 
-<?php mysql_select_db("chats") or die("Couldn't select DB");?>
-<?php
+<form role="form" class="form-horizontal" action="invitescript.php" method="POST">
 
-function send_msg($sender, $message){
+<div class="form-group">
+    <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
+    <div class="col-sm-4">
+    	<input type="text" class="form-control" id="cr_name" name="d_name" value="<?php echo $chatroom_name; ?>" readonly>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-2" for="username">Username:</label>
+    <div class="col-sm-4">
+    	<input type="text" class="form-control" id="username" name="cr_username" value="<?php echo $chatroom_username;?>" readonly>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-2" for="email">Invitee email address:</label>
+    <div class="col-sm-4">
+    	<input type="text" class="form-control" id="email" name="email">
+    </div>
+    <div class="col-sm-5" style="padding-top:7px;">
+    	For more than 1 use comma (",") delimiter
+    </div>
+</div>
 
-	if(!empty($sender) && !empty($message)){
-
-			$esc_sender = mysql_real_escape_string($sender);
-			$esc_message = mysql_real_escape_string($message);
-
-			$query = mysql_query("INSERT INTO ".$_SESSION["chat_name"]." VALUES ('', '$esc_sender', '$esc_message', '')");
-
-			if($query){
-
-				//echo "Message inserted in the database successfully.";
-				return true;
-			}else{
-				//echo "Message not inserted.";
-				return false;
-			}
-
-
-
-		}else { echo 'Please insert values in the fields'; return false;}
- 
-}
-
-
-
-
-
-function get_msg(){
-
-	$query = mysql_query("SELECT * FROM ".$_SESSION["chat_name"]);
-
-	$i = 0;
-
-	while($chat = mysql_fetch_assoc($query)){
-
-		$info[$i]['chat_id'] = $chat['chat_id'];
-		$info[$i]['chat_name'] = $chat['chat_name'];
-		$info[$i]['chat_message'] = $chat['chat_message'];
-		$info[$i]['chat_time'] = $chat['chat_time'];
-
-		$i++;
-
-	}
-	$rows = mysql_num_rows($query);
-
-	for($i;$i--;$i>0){
-
-		echo "Sender ".$info[$i]['chat_name']. "<br />";
-		echo $info[$i]['chat_message']."<br /><br />";
-
-
-	}
-
-	}
-
-
+<div class="form-group"> 
+    <div class="col-sm-offset-2 col-sm-10">
+      <input type="submit" class="btn btn-default" value="Send" name="send"></input>
+    </div>
+</div>
 	
-		if(isset($_POST['send'])){
-
-			$sender = $_POST['sender'];
-			$message = $_POST['message'];
-			
-			if(send_msg($sender, $message)){
-				echo "<div id='feedback' style='font-family: \'Secular One\', sans-serif;font-size: 1.5em;font-weight: 300;color:#4059e5;text-align:center'>Message successfully sent!</div>";
-
-				
-
-			}else{
-				
-				echo "<div id='feedback' style='font-family: \'Secular One\', sans-serif;font-size: 1.5em;font-weight: 300;color:#4059e5;text-align:center'>Message Failed to send.</div>";
-			}
-		}
-	
-	
-
-
-
-?>
-<div id="messages">
-
-	<?php get_msg();?>
-
-</div> <!--Messages -->
-
-<form role="form" method="POST" action="chathome.php" class="form-horizontal" id="form_input">
-	<div>&nbsp;</div>
-	
-	
-	
-
-
-	<div class="col-sm-offset-2 col-sm-7">
-	<div class="form-group">
-		
-		<div class="col-sm-10">
-			<input type="text" class="form-control" name="sender" value="<?php echo $chatname_details['cr_username'];?>" id="sender" readonly>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<label class="control-label col-sm-2" for="message">Message:</label>
-		<div class="col-sm-10">
-			<textarea class="form-control" rows="5" name="message" id="message" placeholder="Type your text here..." ></textarea>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<div class="col-sm-offset-6 col-sm-6">
-			<input type="submit" class="btn btn-default" name="send" value="Send Message">	
-		</div>
-	</div>
-	</div>
 
 </form>
 
-<!-- Javascripts -->
-<script type="text/javascript" src="scripts/js/auto_chat.js"></script>
+
 
 
 

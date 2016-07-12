@@ -52,74 +52,121 @@
 		
 		</div>
 </nav>
+
 <div class="text-center">
 <h2>Prattle | Chatroom Login</h2>
 </div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div class="col-sm-6">
-<form role="form" class="form-horizontal" action="joinchatscript.php" method="POST">
 
-<div class="form-group">
-    <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
-    <div class="col-sm-6">
-    	<input type="text" class="form-control" id="cr_name" name="d_name">
-    </div>
-</div>
-<div class="form-group">
-    <label class="control-label col-sm-2" for="username">Username:</label>
-    <div class="col-sm-6">
-    	<input type="text" class="form-control" id="username" name="cr_username">
-    </div>
-</div>
-<div class="form-group">
-    <label class="control-label col-sm-2" for="password">Password:</label>
-    <div class="col-sm-6">
-    	<input type="password" class="form-control" id="password" name="cr_password">
-    </div>
-</div>
 
-<div class="form-group"> 
-    <div class="col-sm-offset-2 col-sm-10">
-      <input type="submit" class="btn btn-default" value="Join" name="join"></input>
-    </div>
-</div>
+<?php
+
+$login = @$_POST['login'];
+//declaring variables to prevent errors.
+$d_name = ""; //chatroom name
+$cr_username = ""; //chatroom username
+
+
+
+
+$d_name = mysql_real_escape_string(strip_tags($_POST['d_name']));
+$cr_username = mysql_real_escape_string(strip_tags($_POST['cr_username']));
+$cr_username_lower = strtolower($cr_username);
+$cr_username_first_capital = ucwords($cr_username_lower);
+
+
+
+
+if($login){
+
+
+$chatname_sql = mysql_query("SELECT * FROM chatroom_login WHERE d_name='$d_name'"); // query the chat
+	//Check for their existence
+	$chatname_count = mysql_num_rows($chatname_sql);
+	if($chatname_count==0){
+		echo '<div class="alert alert-info">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<h3>No such ChatRoom exists.<br> Please try again.</h3>
+		</div>';
+
+	}else{
+		$i = 0;
+		while($chat_login = mysql_fetch_assoc($chatname_sql)){
+			$chat_user[$i]['cr_username'] = $chat_login['cr_username']; 
+			
+			
+			$i++;
+		} 
+
 	
+		$result_flag = 0;
+		$num_rows_total = $i;
+		
+		for($i=0;$i<$num_rows_total;$i++){
+			
+			if(!strcmp($cr_username_first_capital,$chat_user[$i]['cr_username'])){
+				
+				
+				$result_flag = 1;
+				$chat_username = $cr_username_first_capital;
+				
+				
+				
 
-</form>
-</div>
+			}else{
+				
+			}
+		}
 
-<div class="col-sm-6">
-<h4>Invited by email? Login here...</h4>
-<form role="form" class="form-horizontal" action="joinemailscript.php" method="POST">
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
-    <div class="col-sm-6">
-      <input type="text" class="form-control" id="cr_name" name="d_name">
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="username">Invited By:</label>
-    <div class="col-sm-6">
-      <input type="text" class="form-control" id="username" name="cr_username">
-    </div>
-</div>
+		if($result_flag == 1){
+			
+			echo '<div class="alert alert-success">
+		  	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	  		<h3>Welcome to your own ChatROOM</h3><h1>'.$d_name.'</h1><br>
+			</div>
 
 
-<div class="form-group"> 
-    <div class="col-sm-offset-2 col-sm-10">
-      <input type="submit" class="btn btn-default" value="Login" name="login"></input>
-    </div>
-</div>
-  
 
-</form>
-</div>
+			';
+
+			$chat_sql = mysql_query("SELECT d_name FROM chatroom_login WHERE cr_username = '$chat_username'");
+			$chat_result_sql = mysql_fetch_assoc($chat_sql);
+			
+			$chat_name = $chat_result_sql['d_name'];
+			$_SESSION["chat_name"] = $chat_name; //will be used to set username and password related to this database/chat-name.
+			
+
+			
+			 // Redirecting here...	 
+			 echo '<script> location.replace("setuser.php"); </script>';
+			 exit();
+
+
+		}else{
+			
+			echo '<div class="alert alert-danger">
+		  	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	  		<h3>Wrong Invite Member entered</h3><br> <h3>Please try again.</h3>
+			</div>';
+
+		}
+
+	}
+
+
+
+
+
+
+}
+
+
+?>
+
+
+
+
+
+
 
 
 

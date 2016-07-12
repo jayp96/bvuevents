@@ -1,7 +1,18 @@
 <?php include('./inc/header.inc.php'); ?>
+<?php
 
+if(!isset($_SESSION["chat_name"])){
+	$chat_name = '';
+}
+else{
 
-<title>Prattle | Login </title>
+	$chat_name = $_SESSION["chat_name"];
+	
+}
+
+?>
+
+<title>Prattle | Invite Login </title>
 </head>
 
 <body>
@@ -52,21 +63,23 @@
 		
 		</div>
 </nav>
+
+
 <div class="text-center">
-<h2>Prattle | Chatroom Login</h2>
+<h2>Prattle | Chatroom Invitation Login</h2>
 </div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
-<div class="col-sm-6">
-<form role="form" class="form-horizontal" action="joinchatscript.php" method="POST">
+<div class="col-sm-offset-2 col-sm-10">
+<form role="form" class="form-horizontal" action="setuserscript.php" method="POST">
 
 <div class="form-group">
     <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
     <div class="col-sm-6">
-    	<input type="text" class="form-control" id="cr_name" name="d_name">
+    	<input type="text" class="form-control" id="cr_name" name="d_name" value="<?php echo $chat_name;?>" readonly>
     </div>
 </div>
 <div class="form-group">
@@ -91,36 +104,6 @@
 
 </form>
 </div>
-
-<div class="col-sm-6">
-<h4>Invited by email? Login here...</h4>
-<form role="form" class="form-horizontal" action="joinemailscript.php" method="POST">
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
-    <div class="col-sm-6">
-      <input type="text" class="form-control" id="cr_name" name="d_name">
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="username">Invited By:</label>
-    <div class="col-sm-6">
-      <input type="text" class="form-control" id="username" name="cr_username">
-    </div>
-</div>
-
-
-<div class="form-group"> 
-    <div class="col-sm-offset-2 col-sm-10">
-      <input type="submit" class="btn btn-default" value="Login" name="login"></input>
-    </div>
-</div>
-  
-
-</form>
-</div>
-
 
 
 <?php include('./inc/footer.inc.php');?>

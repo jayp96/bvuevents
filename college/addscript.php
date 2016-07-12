@@ -1,5 +1,5 @@
 <?php include('./inc/header.inc.php'); ?>
-
+ 
 
 <title>Prattle | Create Chatroom </title>
 </head>
@@ -73,6 +73,9 @@ $c_name_first_capital = ucwords($c_name_lower);
 $c_key = md5($c_name_lower);
 
 $c_username= mysql_real_escape_string(strip_tags($_POST['c_username']));
+$c_username_lower = strtolower($c_username);
+$c_username_first_capital = ucwords($c_username_lower);
+
 
 $c_password = mysql_real_escape_string(strip_tags($_POST['c_password']));
 
@@ -84,8 +87,8 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 	$count = mysql_num_rows($sql); //Count the number of rows returned
 	if ($count == 0) {
 
-		//MAKING USERNAME UNIQUE
-		$username_sql = mysql_query("SELECT * FROM chatroom WHERE c_username = '$c_name_first_capital'"); // query the username
+		//MAKING USERNAME UNIQUE IN CHATROOM TABLE
+		$username_sql = mysql_query("SELECT * FROM chatroom WHERE c_username = '$c_username_first_capital'"); // query the username
 		$username_count = mysql_num_rows($username_sql);
 		if($username_count==0){
 
@@ -94,7 +97,7 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 		//check all of the fields have been filled in
 		if($c_name&&$c_key&&$c_username&&$c_password&&$c_description){
 			
-			$sql_insert = mysql_query("INSERT INTO chatroom VALUES ( '' , '$c_name_first_capital' , '$c_key' , '$c_username' , '$c_password' , '$c_description') ");
+			$sql_insert = mysql_query("INSERT INTO chatroom VALUES ( '' , '$c_name_first_capital' , '$c_key' , '$c_username_first_capital' , '$c_password' , '$c_description') ");
 
 			if($sql_insert){
 														
@@ -116,8 +119,17 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 					}else{
 						echo "<div class='alert alert-danger'".mysql_error(mysql_connect("localhost" , "root" , "myniki123"))."</div>"; //change here
 					}
+					
 					mysql_select_db("bvuevents") or die("Couldn't revert back to the previous database");
-					$sql_insert_chatroom_login = mysql_query("INSERT INTO chatroom_login VALUES ('', '$c_username', '$c_password', '$c_name_first_capital')");
+					
+
+					//MAKING USERNAME UNIQUE IN CHATROOM_LOGIN TABLE
+					$username_chat_sql = mysql_query("SELECT * FROM chatroom_login WHERE c_username = '$c_username_first_capital'"); // query the username
+					$username_chat_count = mysql_num_rows($username_chat_sql);
+					if($username_chat_count==0){
+
+
+						$sql_insert_chatroom_login = mysql_query("INSERT INTO chatroom_login VALUES ('', '$c_username_first_capital', '$c_password', '$c_name_first_capital')");
 					if($sql_insert_chatroom_login){
 						echo "<div class='alert alert-info'><h4>Explore....</h4></div>";
 					}else{
@@ -133,7 +145,15 @@ $sql = mysql_query("SELECT * FROM chatroom WHERE c_key='$c_key'"); // query the 
 						</div>
 					</div>
 					</div>
-					</div>';
+					</div>';}else{
+
+
+						echo "<div class='alert alert-info'><h2>Sorry, but this username has already been taken. Enter a unique username.</h2></div>";
+
+					}
+
+
+					
 
 			}
 			else

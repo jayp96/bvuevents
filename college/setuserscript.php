@@ -1,7 +1,18 @@
 <?php include('./inc/header.inc.php'); ?>
+<?php
 
+if(!isset($_SESSION["chat_name"])){
+	$chat_name = '';
+}
+else{
 
-<title>Prattle | Login </title>
+	$chat_name = $_SESSION["chat_name"];
+	
+}
+
+?>
+
+<title>Prattle | Invite Login </title>
 </head>
 
 <body>
@@ -55,72 +66,71 @@
 <div class="text-center">
 <h2>Prattle | Chatroom Login</h2>
 </div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div class="col-sm-6">
-<form role="form" class="form-horizontal" action="joinchatscript.php" method="POST">
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
-    <div class="col-sm-6">
-    	<input type="text" class="form-control" id="cr_name" name="d_name">
-    </div>
-</div>
-<div class="form-group">
-    <label class="control-label col-sm-2" for="username">Username:</label>
-    <div class="col-sm-6">
-    	<input type="text" class="form-control" id="username" name="cr_username">
-    </div>
-</div>
-<div class="form-group">
-    <label class="control-label col-sm-2" for="password">Password:</label>
-    <div class="col-sm-6">
-    	<input type="password" class="form-control" id="password" name="cr_password">
-    </div>
-</div>
-
-<div class="form-group"> 
-    <div class="col-sm-offset-2 col-sm-10">
-      <input type="submit" class="btn btn-default" value="Join" name="join"></input>
-    </div>
-</div>
-	
-
-</form>
-</div>
-
-<div class="col-sm-6">
-<h4>Invited by email? Login here...</h4>
-<form role="form" class="form-horizontal" action="joinemailscript.php" method="POST">
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="cr_name">Chatroom Name:</label>
-    <div class="col-sm-6">
-      <input type="text" class="form-control" id="cr_name" name="d_name">
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-sm-2" for="username">Invited By:</label>
-    <div class="col-sm-6">
-      <input type="text" class="form-control" id="username" name="cr_username">
-    </div>
-</div>
 
 
-<div class="form-group"> 
-    <div class="col-sm-offset-2 col-sm-10">
-      <input type="submit" class="btn btn-default" value="Login" name="login"></input>
-    </div>
-</div>
-  
+<?php
 
-</form>
-</div>
+$join = @$_POST['join'];
+//declaring variables to prevent errors.
+$d_name = ""; //chatroom name
+$cr_username = ""; //chatroom username
+$cr_password = ""; //chatroom password
+
+$d_name = mysql_real_escape_string(strip_tags(@$_POST['d_name']));
+$cr_username = mysql_real_escape_string(strip_tags(@$_POST['cr_username']));
+$cr_username_lower = strtolower($cr_username);
+$cr_username_first_capital = ucwords($cr_username_lower);
+
+$cr_password = mysql_real_escape_string(strip_tags(@$_POST['cr_password']));
+if($join){
 
 
+$chatname_sql = mysql_query("SELECT * FROM chatroom_login WHERE d_name='$d_name'"); // query the chat
+	//Check for their existence
+	$chatname_count = mysql_num_rows($chatname_sql);
+	if($chatname_count==0){
+		echo '<div class="alert alert-info">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<h3>No such ChatRoom exists.<br> Please try again.</h3>
+		</div>';
 
+	}else{
+		
+
+
+		//MAKING USERNAME UNIQUE IN CHATROOM TABLE
+		$username_sql = mysql_query("SELECT * FROM chatroom_login WHERE c_username = '$cr_username_first_capital'"); // query the username
+		$username_count = mysql_num_rows($username_sql);
+		if($username_count==0){
+
+
+			$sql_insert_chatroom_login = mysql_query("INSERT INTO chatroom_login VALUES ('', '$cr_username_first_capital', '$cr_password', '$d_name')");
+					if($sql_insert_chatroom_login){
+						echo "<div class='alert alert-info'><h4>Explore....</h4></div>";
+					}else{
+
+						echo "<div class='alert alert-danger'".mysql_error(mysql_connect("localhost" , "root" , "myniki123"))."</div>"; //change here
+					}
+
+
+					echo '<div class="col-sm-6">
+					<div id="login">
+						<div class="text-center">
+							<a href="joinchatroom.php" class="btn btn-primary" role="button">Log On</a>
+						</div>
+					</div>
+					</div>
+					</div>';}
+					else{
+
+
+						echo "<div class='alert alert-info'><h2>Sorry, but this username has already been taken. Enter a unique username.</h2></div>";
+
+					}
+
+
+		}
+	}
+
+?>
 <?php include('./inc/footer.inc.php');?>
